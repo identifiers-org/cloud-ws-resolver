@@ -14,4 +14,8 @@ import org.springframework.data.repository.CrudRepository;
 public interface NamespaceRespository extends CrudRepository<Namespace, String> {
 
     Namespace findByPrefix(String prefix);
+
+    Namespace findByMirId(String mirId);
+
+    Namespace findByResourcesMirId(String mirId);
 }

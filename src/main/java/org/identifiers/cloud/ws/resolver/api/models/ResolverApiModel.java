@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.identifiers.cloud.ws.resolver.api.ApiCentral;
 import org.identifiers.cloud.ws.resolver.api.responses.ResponseResolvePayload;
 import org.identifiers.cloud.ws.resolver.api.responses.ServiceResponseResolve;
+import org.identifiers.cloud.ws.resolver.data.models.Namespace;
+import org.identifiers.cloud.ws.resolver.data.repositories.NamespaceRespository;
 import org.identifiers.cloud.ws.resolver.models.CompactId;
 import org.identifiers.cloud.ws.resolver.models.CompactIdException;
 import org.identifiers.cloud.ws.resolver.models.CompactIdParsingHelper;
@@ -11,10 +13,14 @@ import org.identifiers.cloud.ws.resolver.models.ParsedCompactIdentifier;
 import org.identifiers.cloud.ws.resolver.services.ResolutionService;
 import org.identifiers.cloud.ws.resolver.services.ResolutionServiceResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.apache.commons.lang3.math.NumberUtils;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 /**
@@ -32,8 +38,15 @@ public class ResolverApiModel {
     // External Helpers
     @Autowired
     private CompactIdParsingHelper compactIdParsingHelper;
+
     @Autowired
     private ResolutionService resolutionService;
+
+    @Autowired
+    private NamespaceRespository namespaceRespository;
+
+    @Value("${org.identifiers.cloud.ws.resolver.mirid.resolution.url_format}")
+    private String miridResolutionFormat;
 
     // Helpers
     private ServiceResponseResolve createDefaultResponse() {
@@ -80,5 +93,26 @@ public class ResolverApiModel {
         response.setHttpStatus(HttpStatus.BAD_REQUEST);
         response.setErrorMessage(errorMessage);
         return response;
+    }
+
+    public URI resolveMirId(String mirId) throws URISyntaxException {
+        log.debug("MIRID resolution request for {}", mirId);
+        if (NumberUtils.isCreatable(mirId)) {
+            mirId = String.format("MIR:%08d", Integer.valueOf(mirId));
+        }
+
+        Namespace namespace = namespaceRespository.findByMirId(mirId);
+        if (namespace != null) {
+            log.debug("Found namespace {} for MIRID {}", namespace.getPrefix(), mirId);
+        } else {
+            namespace = namespaceRespository.findByResourcesMirId(mirId);
+            if (namespace != null) {
+                log.debug("Found namespace {} for MIRID {} via resource", namespace.getPrefix(), mirId);
+            }
+        }
+        if (namespace != null) {
+            return new URI(String.format(miridResolutionFormat, namespace.getPrefix()));
+        }
+        return null;
     }
 }

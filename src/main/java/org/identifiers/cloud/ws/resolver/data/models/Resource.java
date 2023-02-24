@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.springframework.data.redis.core.index.Indexed;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -25,6 +26,7 @@ import java.util.Date;
 public class Resource implements Serializable {
     // identifiers.org internal ID for this resource
     private long id;
+    @Indexed
     private String mirId;
     private String urlPattern;
     // This is known as 'info' in the old data model from the EBI platform

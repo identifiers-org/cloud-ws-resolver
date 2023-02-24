@@ -1,5 +1,8 @@
 package org.identifiers.cloud.ws.resolver.api.controllers;
 
+import org.identifiers.cloud.ws.resolver.api.ApiCentral;
+import org.identifiers.cloud.ws.resolver.data.models.Namespace;
+import org.identifiers.cloud.ws.resolver.data.repositories.NamespaceRespository;
 import org.identifiers.cloud.ws.resolver.services.AsyncMatomoCidResolutionService;
 import org.identifiers.cloud.ws.resolver.api.models.ResolverApiModel;
 import org.identifiers.cloud.ws.resolver.api.responses.ResponseResolvePayload;
@@ -7,11 +10,16 @@ import org.identifiers.cloud.ws.resolver.api.responses.ServiceResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * @author Manuel Bernal Llinares <mbdebian@gmail.com>
@@ -52,6 +60,8 @@ public class ResolverApiController {
 
     @Autowired
     private AsyncMatomoCidResolutionService matomoModel;
+
+
 
     // Compact Identifier and provider code helper
     @Deprecated
@@ -103,6 +113,33 @@ public class ResolverApiController {
             result = model.resolveCompactId(providerAndCompactIdentifier.getCompactIdentifier());
         }*/
         return new ResponseEntity<>(result, result.getHttpStatus());
+    }
+
+    @GetMapping(value = "/resolveMirId/{mirId}")
+    public ResponseEntity<?> resolve(@PathVariable String mirId) {
+        try {
+            URI namespaceLocation = model.resolveMirId(mirId);
+            if (namespaceLocation != null) {
+                HttpHeaders headers = new HttpHeaders();
+                headers.setLocation(namespaceLocation);
+                return new ResponseEntity<>(headers, HttpStatus.FOUND);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch(NumberFormatException e) {
+            ServiceResponse response = new ServiceResponse();
+            response.setApiVersion(ApiCentral.apiVersion);
+            response.setErrorMessage("MIRIDs must be in the format MIR:XXXXXXXX or integers up to 8 digit");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        } catch (URISyntaxException e) {
+            // Should never actually happen on production.
+            // If so, check the WS_RESOLVER_CONFIG_REGISTRY_NAMESPACE_REDIRECT_FORMAT application property
+            ServiceResponse response = new ServiceResponse();
+            response.setApiVersion(ApiCentral.apiVersion);
+            response.setErrorMessage("MIRID resolution format is not setup correctly on server. Please contact support.");
+            logger.error("Invalid URI format for MIRID resolution. {}", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
  /*   //@RequestMapping(value = "{compactId}", method = RequestMethod.GET)
