@@ -136,7 +136,7 @@ public class ResolverApiController {
             // If so, check the WS_RESOLVER_CONFIG_REGISTRY_NAMESPACE_REDIRECT_FORMAT application property
             ServiceResponse response = new ServiceResponse();
             response.setApiVersion(ApiCentral.apiVersion);
-            response.setErrorMessage("MIRID resolution format is not setup correctly on server. Please contact support.");
+            response.setErrorMessage("MIRID resolution format is not setup correctly on server. Please contact support at identifiers-org@ebi.ac.uk");
             logger.error("Invalid URI format for MIRID resolution. {}", e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
