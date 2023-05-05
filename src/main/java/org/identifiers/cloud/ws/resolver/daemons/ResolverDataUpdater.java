@@ -49,7 +49,6 @@ public class ResolverDataUpdater extends Thread {
         logger.info("--- Resolver Data Update Daemon Start ---");
         Random random = new Random(System.currentTimeMillis());
         while (!isShutdown()) {
-            // TODO - Do your stuff
             logger.info("---> Creating instance of Namespace ---");
             List<Namespace> namespaces = new ArrayList<>();
             int nextTimeLimitSeconds = WAIT_TIME_LIMIT_SECONDS;

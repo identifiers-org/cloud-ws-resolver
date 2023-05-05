@@ -68,7 +68,11 @@ public class ResolverDataHelper {
                 .setResourceHomeUrl(resource.getResourceHomeUrl())
                 .setDeprecatedResource(resource.isDeprecated())
                 .setResourceDeprecationDate(resource.getDeprecationDate())
-                .setMirId(resource.getMirId());
+                .setMirId(resource.getMirId())
+                .setAuthHelpDescription(resource.getAuthHelpDescription())
+                .setAuthHelpUrl(resource.getAuthHelpUrl())
+                .setProtectedUrls(resource.isProtectedUrls())
+                .setRenderProtectedLanding(resource.isRenderProtectedLanding());
     }
 
     private Map<String, ResourceRecommendation> getRecommendationsByResourceId(List<ResolvedResource> resolvedResources) {
