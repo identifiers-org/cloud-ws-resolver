@@ -26,7 +26,7 @@ services:
     redis:
         image: redis:4.0.8-alpine
         ports:
-            - "6378:6379"
+            - "6379:6379"
     recommender:
         image: identifiersorg/cloud-ws-resource-recommender
         environment:
@@ -43,6 +43,7 @@ services:
             - WS_LINK_CHECKER_CONFIG_REDIS_PORT=6379
             - WS_LINK_CHECKER_CONFIG_BACKEND_SERVICE_RESOLVER_HOST=localhost
             - WS_LINK_CHECKER_CONFIG_DAEMON_PERIODIC_LINK_CHECK_REQUESTER_ENABLED=false
+            - WS_LINK_CHECKER_CONFIG_BACKEND_SERVICE_JWT_ISSUERURI=https://auth.identifiers.org/auth/realms/idorg
         ports:
             - "8084:8084"
         depends_on:
