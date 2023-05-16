@@ -51,6 +51,10 @@ public class ResourceRecommenderService implements ResourceRecommenderStrategy {
                                         .setResourceDeprecationDate(resolvedResource.getResourceDeprecationDate())
                                         .setMirId(resolvedResource.getMirId())
                                         .setNamespacePrefix(resolvedResource.getNamespacePrefix())
+                                        .setProtectedUrls(resolvedResource.isProtectedUrls())
+                                        .setAuthHelpUrl(resolvedResource.getAuthHelpUrl())
+                                        .setAuthHelpDescription(resolvedResource.getAuthHelpDescription())
+                                        .setRenderProtectedLanding(resolvedResource.isRenderProtectedLanding())
                                         .setLocation(
                                                 new Location()
                                                         .setCountryName(resolvedResource.getLocation().getCountryName())
