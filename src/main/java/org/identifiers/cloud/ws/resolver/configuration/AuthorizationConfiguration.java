@@ -10,7 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 @Configuration
 @EnableWebSecurity
-@Profile("production")
+@Profile("authenabled")
 public class AuthorizationConfiguration extends WebSecurityConfigurerAdapter {
 
     @Value("${org.identifiers.cloud.ws.resolver.requiredrole}")

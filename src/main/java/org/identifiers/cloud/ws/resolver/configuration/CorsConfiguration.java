@@ -17,7 +17,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * ---
  */
 @Configuration
-@Profile("production")
+@Profile("authenabled")
 public class CorsConfiguration {
     @Value("${org.identifiers.cloud.ws.resolver.cors.origin}")
     private String corsOrigins;
