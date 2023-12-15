@@ -1,4 +1,4 @@
-package org.identifiers.cloud.ws.resolver.daemons.models;
+package org.identifiers.cloud.ws.resolver.periodictasks.models;
 
 import org.identifiers.cloud.ws.resolver.data.models.Namespace;
 

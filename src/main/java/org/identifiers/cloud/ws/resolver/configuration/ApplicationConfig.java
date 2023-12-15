@@ -2,22 +2,26 @@ package org.identifiers.cloud.ws.resolver.configuration;
 
 import lombok.extern.slf4j.Slf4j;
 import org.identifiers.cloud.libapi.services.ApiServicesFactory;
-import org.identifiers.cloud.ws.resolver.daemons.models.ResolverDataSourcer;
-import org.identifiers.cloud.ws.resolver.daemons.models.ResolverDataSourcerFromWs;
+import org.identifiers.cloud.ws.resolver.periodictasks.models.ResolverDataSourcer;
+import org.identifiers.cloud.ws.resolver.periodictasks.models.ResolverDataSourcerFromWs;
 import org.identifiers.cloud.ws.resolver.models.ResolverDataFetcher;
 import org.identifiers.cloud.ws.resolver.models.ResolverDataFetcherFromDataBackend;
 import org.identifiers.cloud.ws.resolver.services.ResolutionService;
 import org.identifiers.cloud.ws.resolver.services.ResolveFirstResolutionStrategy;
+import org.matomo.java.tracking.MatomoTracker;
+import org.matomo.java.tracking.TrackerConfiguration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.web.client.RestTemplate;
 import org.identifiers.cloud.libapi.services.ResourceRecommenderService;
+
+import java.net.URI;
 
 /**
  * @author Manuel Bernal Llinares <mbdebian@gmail.com>
@@ -30,33 +34,29 @@ import org.identifiers.cloud.libapi.services.ResourceRecommenderService;
 @EnableRedisRepositories
 @Slf4j
 public class ApplicationConfig {
-    @Value("${spring.redis.port}")
-    private int redisPort;
-
-    @Value("${spring.redis.host}")
-    private String redisHost;
-
     @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
+    public RedisConnectionFactory redisConnectionFactory (
+        @Value("${spring.redis.port}") int redisPort,
+        @Value("${spring.redis.host}") String redisHost
+    ) {
         log.info(String.format("Using Redis on host '%s' port '%d'", redisHost, redisPort));
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration(redisHost,
                 redisPort);
-        return new JedisConnectionFactory(redisStandaloneConfiguration);    }
+        return new LettuceConnectionFactory(redisStandaloneConfiguration);
+    }
 
     @Bean
-    public RedisTemplate<?, ?> redisTemplate() {
+    public RedisTemplate<?, ?> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<byte[], byte[]> template = new RedisTemplate<>();
-        template.setConnectionFactory(redisConnectionFactory());
+        template.setConnectionFactory(redisConnectionFactory);
         return template;
     }
 
-    // TODO - I should probably use @Component for this
     @Bean
     public ResolverDataSourcer resolverDataSourcer() {
         return new ResolverDataSourcerFromWs();
     }
 
-    // Resolver Data Fetcher
     @Bean
     public ResolverDataFetcher resolverDataFetcher() {
         return new ResolverDataFetcherFromDataBackend();
@@ -82,5 +82,15 @@ public class ApplicationConfig {
     ) {
         return ApiServicesFactory.getResourceRecommenderService
                 (resourceRecommenderServiceHost, resourceRecommenderServicePort);
+    }
+
+    @Bean
+    public MatomoTracker getMatomoTracker(
+        @Value("${org.identifiers.matomo.baseUrl}") URI matomoBaseUrl
+    ) {
+        TrackerConfiguration configuration = TrackerConfiguration.builder()
+                .apiEndpoint(matomoBaseUrl)
+                .build();
+        return new MatomoTracker(configuration);
     }
 }

@@ -1,4 +1,4 @@
-package org.identifiers.cloud.ws.resolver.daemons.models;
+package org.identifiers.cloud.ws.resolver.periodictasks.models;
 
 /**
  * @author Manuel Bernal Llinares <mbdebian@gmail.com>

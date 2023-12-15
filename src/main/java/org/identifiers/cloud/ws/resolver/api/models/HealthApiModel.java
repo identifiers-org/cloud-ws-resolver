@@ -20,7 +20,7 @@ import java.util.UUID;
 @Deprecated
 @ConditionalOnBean(HealthApiController.class)
 public class HealthApiModel {
-    private static String runningSessionId = UUID.randomUUID().toString();
+    private static final String runningSessionId = UUID.randomUUID().toString();
 
     public String livenessCheck() {
         return runningSessionId;

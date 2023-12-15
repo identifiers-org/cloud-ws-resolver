@@ -1,4 +1,4 @@
-package org.identifiers.cloud.ws.resolver.daemons.models;
+package org.identifiers.cloud.ws.resolver.periodictasks.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;

@@ -22,8 +22,10 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class CompactIdParsingHelper {
 
-    @Autowired
-    private NamespaceRespository namespaceRespository;
+    private final NamespaceRespository namespaceRespository;
+    public CompactIdParsingHelper(NamespaceRespository namespaceRespository) {
+        this.namespaceRespository = namespaceRespository;
+    }
 
     // Helpers
     private boolean isNamespaceEmbeddedInLui(String namespace) {

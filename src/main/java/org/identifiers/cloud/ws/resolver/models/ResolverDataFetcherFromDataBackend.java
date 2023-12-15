@@ -32,7 +32,7 @@ public class ResolverDataFetcherFromDataBackend implements ResolverDataFetcher {
             if (namespace != null) {
                 return namespace.getResources();
             } else {
-                log.warn("NO PID entry for prefix '%s'", prefix);
+                log.warn("NO PID entry for prefix '{}'", prefix);
             }
         }
         return new ArrayList<>();

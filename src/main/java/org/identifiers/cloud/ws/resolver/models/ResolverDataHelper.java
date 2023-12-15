@@ -129,7 +129,7 @@ public class ResolverDataHelper {
                         .setNamespacePrefix(namespace.getPrefix())
                         .setCompactIdentifierResolvedUrl(resolveUrlForLocalId(resource.getUrlPattern(),
                                 resource.getSampleId()))
-                        .setRecommendation(new Recommendation())).collect(Collectors.toList())));
+                        .setRecommendation(new Recommendation())).toList()));
         return resolvedResources;
     }
 

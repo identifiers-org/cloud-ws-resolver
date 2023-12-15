@@ -21,7 +21,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     private static final Logger logger = LoggerFactory.getLogger(RestResponseEntityExceptionHandler.class);
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-    private static final String now() {
+    private static String now() {
         // Date for easier finding related entries in log files
         Calendar cal = Calendar.getInstance();
         return sdf.format(cal.getTime());

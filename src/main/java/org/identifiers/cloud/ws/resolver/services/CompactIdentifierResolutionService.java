@@ -6,7 +6,6 @@ import org.identifiers.cloud.ws.resolver.data.models.Resource;
 import org.identifiers.cloud.ws.resolver.models.ParsedCompactIdentifier;
 import org.identifiers.cloud.ws.resolver.models.ResolverDataFetcher;
 import org.identifiers.cloud.ws.resolver.models.ResolverDataHelper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
@@ -21,16 +20,18 @@ import java.util.stream.Collectors;
  * @author Manuel Bernal Llinares <mbdebian@gmail.com>
  * ---
  */
+@Slf4j
 @Component
 @Qualifier("CompactIdentifierResolutionService")
-@Slf4j
 public class CompactIdentifierResolutionService implements ResolutionService {
-    @Autowired
-    private ResolverDataFetcher resolverDataFetcher;
-    @Autowired
-    private ResolverDataHelper resolverDataHelper;
+    private final ResolverDataFetcher resolverDataFetcher;
+    private final ResolverDataHelper resolverDataHelper;
+    public CompactIdentifierResolutionService(ResolverDataFetcher resolverDataFetcher, ResolverDataHelper resolverDataHelper) {
+        this.resolverDataFetcher = resolverDataFetcher;
+        this.resolverDataHelper = resolverDataHelper;
+    }
 
-    class CompactIdentifierVerification {
+    static class CompactIdentifierVerification {
         String errorMessage;
         boolean valid = true;
     }

@@ -1,7 +1,7 @@
 package org.identifiers.cloud.ws.resolver.api.controllers;
 
 import org.identifiers.cloud.ws.resolver.api.ApiCentral;
-import org.identifiers.cloud.ws.resolver.services.AsyncMatomoCidResolutionService;
+import org.identifiers.cloud.ws.resolver.services.MatomoTrackingService;
 import org.identifiers.cloud.ws.resolver.api.models.ResolverApiModel;
 import org.identifiers.cloud.ws.resolver.api.responses.ResponseResolvePayload;
 import org.identifiers.cloud.ws.resolver.api.responses.ServiceResponse;
@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.HandlerMapping;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -29,7 +29,7 @@ import java.net.URISyntaxException;
 public class ResolverApiController {
     private static final Logger logger = LoggerFactory.getLogger(ResolverApiController.class);
 
-    class ProviderCompactIdTuple {
+    static class ProviderCompactIdTuple {
         String provider;
         String compactIdentifier;
 
@@ -53,10 +53,10 @@ public class ResolverApiController {
     }
 
     @Autowired
-    private ResolverApiModel model;
+    private ResolverApiModel resolverApiModel;
 
     @Autowired
-    private AsyncMatomoCidResolutionService matomoModel;
+    private MatomoTrackingService matomoTrackingService;
 
 
 
@@ -98,24 +98,17 @@ public class ResolverApiController {
                 request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE).toString();
         logger.info("Resolution request, PATH '{}'", path);
 
-        //ProviderCompactIdTuple providerAndCompactIdentifier = extractProviderAndCompactIdentifier(path.replaceFirst("/", ""));
-        ServiceResponse<ResponseResolvePayload> result = model.resolveRawCompactId(path.replaceFirst("/", ""));
+        ServiceResponse<ResponseResolvePayload> result = resolverApiModel.resolveRawCompactId(path.replaceFirst("/", ""));
 
-        matomoModel.asyncHandleCidResolution(request, result);
+        matomoTrackingService.handleCidResolution(request, result);
 
-        /*if (providerAndCompactIdentifier.getProvider() != null) {
-            result = model.resolveCompactId(providerAndCompactIdentifier.getCompactIdentifier(),
-                    providerAndCompactIdentifier.getProvider());
-        } else {
-            result = model.resolveCompactId(providerAndCompactIdentifier.getCompactIdentifier());
-        }*/
         return new ResponseEntity<>(result, result.getHttpStatus());
     }
 
     @GetMapping(value = "/resolveMirId/{mirId}")
     public ResponseEntity<?> resolve(@PathVariable String mirId) {
         try {
-            URI namespaceLocation = model.resolveMirId(mirId);
+            URI namespaceLocation = resolverApiModel.resolveMirId(mirId);
             if (namespaceLocation != null) {
                 HttpHeaders headers = new HttpHeaders();
                 headers.setLocation(namespaceLocation);
@@ -138,28 +131,4 @@ public class ResolverApiController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
- /*   //@RequestMapping(value = "{compactId}", method = RequestMethod.GET)
-    public @ResponseBody
-    ResponseEntity<?> queryByCompactId(@PathVariable("compactId") String compactId) {
-        // NOTE - I don't like how this looks, if handling exceptions at controller level I think I should go for
-        // @ControllerAdvice, but it depends on where the exception belongs to, I think all exceptions belonging to the
-        // business logic should be caught and handled at the model level (the main model associated to the controller),
-        // and only request related exceptions should be handled at the controller level, probably via @ControllerAdvice
-        // mechanism and error controller, that I need to implement anyway.
-        ServiceResponse result = model.resolveCompactId(compactId);
-        return new ResponseEntity<>(result, result.getHttpStatus());
-    }
-
-    //@RequestMapping(value = "{selector}/{compactId}", method = RequestMethod.GET)
-    public @ResponseBody
-    ResponseEntity<?> queryBySelectorAndCompactId(@PathVariable("selector") String selector, @PathVariable("compactId") String compactId) {
-        // NOTE - I don't like how this looks, if handling exceptions at controller level I think I should go for
-        // @ControllerAdvice, but it depends on where the exception belongs to, I think all exceptions belonging to the
-        // business logic should be caught and handled at the model level (the main model associated to the controller),
-        // and only request related exceptions should be handled at the controller level, probably via @ControllerAdvice
-        // mechanism and error controller, that I need to implement anyway.
-        ServiceResponse result = model.resolveCompactId(compactId, selector);
-        return new ResponseEntity<>(result, result.getHttpStatus());
-    }*/
 }

@@ -1,16 +1,19 @@
 package org.identifiers.cloud.ws.resolver;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-public class ResolverApplicationTests {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@SpringBootTest (classes = {TestRedisServer.class})
+class ResolverApplicationTests {
+	@Autowired
+	ResolverApplication application;
 
 	@Test
-	public void contextLoads() {
+	void contextLoads() {
+		assertNotNull(application);
 	}
 
 }

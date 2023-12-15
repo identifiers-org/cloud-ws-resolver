@@ -1,4 +1,4 @@
-package org.identifiers.cloud.ws.resolver.daemons.models;
+package org.identifiers.cloud.ws.resolver.periodictasks.models;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,7 +34,7 @@ public class ResolverDataSourcerFromSampleFile implements ResolverDataSourcer {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             result = objectMapper.readValue(new ClassPathResource(sampleDataFileLocalPath).getInputStream(),
-                    new TypeReference<List<Namespace>>() {});
+                    new TypeReference<>() {});
         } catch (IOException e) {
             throw new ResolverDataSourcerException(String
                     .format("There was a problem reading the file at '%s' -> '%s'",
