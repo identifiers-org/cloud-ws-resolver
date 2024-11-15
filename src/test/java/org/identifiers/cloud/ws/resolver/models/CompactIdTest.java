@@ -26,7 +26,7 @@ class CompactIdTest {
         assertTrue((compactId.getId() == null ? expectedId == null : compactId.getId().equals(expectedId)), testDescription);
     }
 
-    private static Stream<?> testingValues() {
+    private static Stream<Arguments> testingValues() {
         return Stream.of(
             Arguments.of("GO:9876345", "go", "9876345", "Normal use case for Compact ID"),
             Arguments.of("Q9876345", null, "Q9876345", "Compact ID with no prefix"),

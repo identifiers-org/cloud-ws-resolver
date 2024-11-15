@@ -24,7 +24,7 @@ public class ServiceResponse<T> implements Serializable {
         return apiVersion;
     }
 
-    public ServiceResponse setApiVersion(String apiVersion) {
+    public ServiceResponse<T> setApiVersion(String apiVersion) {
         this.apiVersion = apiVersion;
         return this;
     }
@@ -33,7 +33,7 @@ public class ServiceResponse<T> implements Serializable {
         return errorMessage;
     }
 
-    public ServiceResponse setErrorMessage(String errorMessage) {
+    public ServiceResponse<T> setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
         return this;
     }
@@ -42,7 +42,7 @@ public class ServiceResponse<T> implements Serializable {
         return httpStatus;
     }
 
-    public ServiceResponse setHttpStatus(HttpStatus httpStatus) {
+    public ServiceResponse<T> setHttpStatus(HttpStatus httpStatus) {
         this.httpStatus = httpStatus;
         return this;
     }
@@ -51,7 +51,7 @@ public class ServiceResponse<T> implements Serializable {
         return payload;
     }
 
-    public ServiceResponse setPayload(T payload) {
+    public ServiceResponse<T> setPayload(T payload) {
         this.payload = payload;
         return this;
     }

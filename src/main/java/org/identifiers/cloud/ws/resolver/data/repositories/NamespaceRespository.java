@@ -18,4 +18,6 @@ public interface NamespaceRespository extends CrudRepository<Namespace, String> 
     Namespace findByMirId(String mirId);
 
     Namespace findByResourcesMirId(String mirId);
+
+    boolean existsByPrefix(String prefix);
 }

@@ -1,5 +1,8 @@
 package org.identifiers.cloud.ws.resolver.models;
 
+import org.slf4j.LoggerFactory;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import org.identifiers.cloud.ws.resolver.data.models.Namespace;
 import org.identifiers.cloud.ws.resolver.data.repositories.NamespaceRespository;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,16 +18,19 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-class CompactIdParsingHelperTest {
-    final CompactIdParsingHelper helper;
+class CompactIdParsingHelperV1Test {
+    final CompactIdParsingHelperV1 helper;
     final NamespaceRespository namespaceRespository;
-    public CompactIdParsingHelperTest() {
+    public CompactIdParsingHelperV1Test() {
         namespaceRespository = mock(NamespaceRespository.class);
-        helper = new CompactIdParsingHelper(namespaceRespository);
+        helper = new CompactIdParsingHelperV1(namespaceRespository);
     }
 
     @BeforeEach
     public void setupNamespaceRepository() {
+        Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        rootLogger.setLevel(Level.WARN);
+
         Namespace namespace = new Namespace()
                 .setPrefix("existing_namespace")
                 .setPattern("\\d+").setDeprecated(false)
@@ -54,12 +60,12 @@ class CompactIdParsingHelperTest {
                     "existing_namespace/123", null, "existing_namespace", "123"),
             Arguments.of("Namespace + lui + provider",
                     "provider/existing_namespace:123", "provider", "existing_namespace", "123"),
-            //FIXME: The parsed result below should be the same as the previous
+            //The parsed result below should be the same as the previous
             Arguments.of("Namespace + lui + provider using slash",
                     "provider/existing_namespace/123", "provider", null, null),
 
             ////// Tests with non existing namespace
-            // FIXME: The helper is inconsistent when the namespace doesn't exist
+            // The helper is inconsistent when the namespace doesn't exist
             Arguments.of("Non existing namespace",
                     "non_existing_namespace", null, null, null),
             Arguments.of("Non existing namespace + lui",
@@ -76,7 +82,7 @@ class CompactIdParsingHelperTest {
                     "lui_namespace:123", null, "lui_namespace", "lui_namespace:123"),
             Arguments.of("Embedded lui namespace + lui + provider",
                     "provider/lui_namespace:123", "provider", "lui_namespace", "lui_namespace:123"),
-            //FIXME: The below is inconsistent
+            // The below is inconsistent
             Arguments.of("Embedded lui namespace + lui + provider using slash",
                     "provider/lui_namespace/123", "provider", null, null)
         );

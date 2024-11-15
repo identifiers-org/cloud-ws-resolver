@@ -42,6 +42,8 @@ class ResolutionServiceTest {
         namespace.setResources(Collections.singletonList(resource));
 
         //Order is important here
+        doReturn(false).when(namespaceRespository).existsByPrefix(anyString());
+        doReturn(true).when(namespaceRespository).existsByPrefix("existing_namespace");
         doReturn(null).when(namespaceRespository).findByPrefix(anyString());
         doReturn(namespace).when(namespaceRespository).findByPrefix("existing_namespace");
     }

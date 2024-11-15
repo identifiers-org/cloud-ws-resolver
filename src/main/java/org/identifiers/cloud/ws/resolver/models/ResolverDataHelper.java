@@ -104,7 +104,7 @@ public class ResolverDataHelper {
                                 .setRenderDeprecatedLanding(parsedCompactIdentifier.isRenderDeprecatedLanding() | resource.isRenderProtectedLanding())
                                 .setNamespacePrefix(parsedCompactIdentifier.getNamespace())
                                 .setCompactIdentifierResolvedUrl(resolveUrlForLocalId(resource.getUrlPattern(),
-                                        (parsedCompactIdentifier.isNamespaceEmbeddedInLui() ? compactIdParsingHelper.trimOutEmbeddedNamespacePrefixFromLui(parsedCompactIdentifier.getLocalId()) : parsedCompactIdentifier.getLocalId())))
+                                        (parsedCompactIdentifier.isNamespaceEmbeddedInLui() ? trimOutEmbeddedNamespacePrefixFromLui(parsedCompactIdentifier.getLocalId()) : parsedCompactIdentifier.getLocalId())))
                                 .setRecommendation(new Recommendation())).collect(Collectors.toList());
         // Get their recommendation scoring information
         Map<String, ResourceRecommendation> recommendationById = getRecommendationsByResourceId(resolvedResources);
@@ -136,5 +136,12 @@ public class ResolverDataHelper {
     // TODO - This could potentially be removed in the future?
     public List<ResolvedResource> getAllResolvedResourcesHomes() {
         return resolveAllResourcesWithTheirSampleId();
+    }
+
+    private String trimOutEmbeddedNamespacePrefixFromLui(String lui) {
+        if (lui.contains(":")) {
+            return lui.substring(lui.indexOf(":") + 1);
+        }
+        return "";
     }
 }

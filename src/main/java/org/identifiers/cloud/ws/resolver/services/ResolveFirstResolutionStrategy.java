@@ -31,9 +31,9 @@ public class ResolveFirstResolutionStrategy implements ResolutionService {
     @Override
     public ResolutionServiceResult resolve(ParsedCompactIdentifier parsedCompactIdentifier) {
         List<String> errors = new ArrayList<>();
-        for (ResolutionService resolutionService:
-             builder.getResolverChain()) {
-            ResolutionServiceResult resolutionServiceResult = resolutionService.resolve(parsedCompactIdentifier);
+        for (ResolutionService resolutionService : builder.getResolverChain()) {
+            ResolutionServiceResult resolutionServiceResult =
+                    resolutionService.resolve(parsedCompactIdentifier);
             if (resolutionServiceResult.isResolved()) {
                 return resolutionServiceResult;
             }
